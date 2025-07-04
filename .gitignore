@@ -30,9 +30,9 @@
 /build/
 
 # Android related
-/lib/firebase_options.dart
+#/lib/firebase_options.dart
 *.jks
-**/android/app/google-services.json
+#**/android/app/google-services.json
 **/android/key.properties
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
@@ -76,4 +76,4 @@
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-/lib/core/constants/firebase_constants.dart
+#/lib/core/constants/firebase_constants.dart

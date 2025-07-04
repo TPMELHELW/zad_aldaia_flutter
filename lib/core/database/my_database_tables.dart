@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:drift/drift.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
@@ -6,13 +5,7 @@ import 'package:zad_aldaia/core/models/article_type.dart';
 class ArticleItems extends Table {
   TextColumn get id => text()(); // Primary key, non-nullable
 
-  TextColumn get section => text()();
-
-  TextColumn get category => text()();
-
-  TextColumn get article => text()();
-
-  TextColumn get language =>  text()();
+  TextColumn get articleId => text()();
 
   TextColumn get type => textEnum<ArticleType>()();
 

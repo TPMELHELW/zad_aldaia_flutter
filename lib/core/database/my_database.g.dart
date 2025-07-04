@@ -18,45 +18,12 @@ class $ArticleItemsTable extends ArticleItems
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _sectionMeta = const VerificationMeta(
-    'section',
+  static const VerificationMeta _articleIdMeta = const VerificationMeta(
+    'articleId',
   );
   @override
-  late final GeneratedColumn<String> section = GeneratedColumn<String>(
-    'section',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _categoryMeta = const VerificationMeta(
-    'category',
-  );
-  @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-    'category',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _articleMeta = const VerificationMeta(
-    'article',
-  );
-  @override
-  late final GeneratedColumn<String> article = GeneratedColumn<String>(
-    'article',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _languageMeta = const VerificationMeta(
-    'language',
-  );
-  @override
-  late final GeneratedColumn<String> language = GeneratedColumn<String>(
-    'language',
+  late final GeneratedColumn<String> articleId = GeneratedColumn<String>(
+    'article_id',
     aliasedName,
     false,
     type: DriftSqlType.string,
@@ -132,10 +99,7 @@ class $ArticleItemsTable extends ArticleItems
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    section,
-    category,
-    article,
-    language,
+    articleId,
     type,
     title,
     content,
@@ -161,37 +125,13 @@ class $ArticleItemsTable extends ArticleItems
     } else if (isInserting) {
       context.missing(_idMeta);
     }
-    if (data.containsKey('section')) {
+    if (data.containsKey('article_id')) {
       context.handle(
-        _sectionMeta,
-        section.isAcceptableOrUnknown(data['section']!, _sectionMeta),
+        _articleIdMeta,
+        articleId.isAcceptableOrUnknown(data['article_id']!, _articleIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_sectionMeta);
-    }
-    if (data.containsKey('category')) {
-      context.handle(
-        _categoryMeta,
-        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_categoryMeta);
-    }
-    if (data.containsKey('article')) {
-      context.handle(
-        _articleMeta,
-        article.isAcceptableOrUnknown(data['article']!, _articleMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_articleMeta);
-    }
-    if (data.containsKey('language')) {
-      context.handle(
-        _languageMeta,
-        language.isAcceptableOrUnknown(data['language']!, _languageMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_languageMeta);
+      context.missing(_articleIdMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -245,25 +185,10 @@ class $ArticleItemsTable extends ArticleItems
             DriftSqlType.string,
             data['${effectivePrefix}id'],
           )!,
-      section:
+      articleId:
           attachedDatabase.typeMapping.read(
             DriftSqlType.string,
-            data['${effectivePrefix}section'],
-          )!,
-      category:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}category'],
-          )!,
-      article:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}article'],
-          )!,
-      language:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}language'],
+            data['${effectivePrefix}article_id'],
           )!,
       type: $ArticleItemsTable.$convertertype.fromSql(
         attachedDatabase.typeMapping.read(
@@ -310,10 +235,7 @@ class $ArticleItemsTable extends ArticleItems
 
 class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   final String id;
-  final String section;
-  final String category;
-  final String article;
-  final String language;
+  final String articleId;
   final ArticleType type;
   final String? title;
   final String? content;
@@ -323,10 +245,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   final int order;
   const ArticleItem({
     required this.id,
-    required this.section,
-    required this.category,
-    required this.article,
-    required this.language,
+    required this.articleId,
     required this.type,
     this.title,
     this.content,
@@ -339,10 +258,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    map['section'] = Variable<String>(section);
-    map['category'] = Variable<String>(category);
-    map['article'] = Variable<String>(article);
-    map['language'] = Variable<String>(language);
+    map['article_id'] = Variable<String>(articleId);
     {
       map['type'] = Variable<String>(
         $ArticleItemsTable.$convertertype.toSql(type),
@@ -370,10 +286,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   ArticleItemsCompanion toCompanion(bool nullToAbsent) {
     return ArticleItemsCompanion(
       id: Value(id),
-      section: Value(section),
-      category: Value(category),
-      article: Value(article),
-      language: Value(language),
+      articleId: Value(articleId),
       type: Value(type),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
@@ -398,10 +311,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ArticleItem(
       id: serializer.fromJson<String>(json['id']),
-      section: serializer.fromJson<String>(json['section']),
-      category: serializer.fromJson<String>(json['category']),
-      article: serializer.fromJson<String>(json['article']),
-      language: serializer.fromJson<String>(json['language']),
+      articleId: serializer.fromJson<String>(json['articleId']),
       type: $ArticleItemsTable.$convertertype.fromJson(
         serializer.fromJson<String>(json['type']),
       ),
@@ -418,10 +328,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'section': serializer.toJson<String>(section),
-      'category': serializer.toJson<String>(category),
-      'article': serializer.toJson<String>(article),
-      'language': serializer.toJson<String>(language),
+      'articleId': serializer.toJson<String>(articleId),
       'type': serializer.toJson<String>(
         $ArticleItemsTable.$convertertype.toJson(type),
       ),
@@ -436,10 +343,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
 
   ArticleItem copyWith({
     String? id,
-    String? section,
-    String? category,
-    String? article,
-    String? language,
+    String? articleId,
     ArticleType? type,
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
@@ -449,10 +353,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     int? order,
   }) => ArticleItem(
     id: id ?? this.id,
-    section: section ?? this.section,
-    category: category ?? this.category,
-    article: article ?? this.article,
-    language: language ?? this.language,
+    articleId: articleId ?? this.articleId,
     type: type ?? this.type,
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
@@ -464,10 +365,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   ArticleItem copyWithCompanion(ArticleItemsCompanion data) {
     return ArticleItem(
       id: data.id.present ? data.id.value : this.id,
-      section: data.section.present ? data.section.value : this.section,
-      category: data.category.present ? data.category.value : this.category,
-      article: data.article.present ? data.article.value : this.article,
-      language: data.language.present ? data.language.value : this.language,
+      articleId: data.articleId.present ? data.articleId.value : this.articleId,
       type: data.type.present ? data.type.value : this.type,
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
@@ -482,10 +380,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   String toString() {
     return (StringBuffer('ArticleItem(')
           ..write('id: $id, ')
-          ..write('section: $section, ')
-          ..write('category: $category, ')
-          ..write('article: $article, ')
-          ..write('language: $language, ')
+          ..write('articleId: $articleId, ')
           ..write('type: $type, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
@@ -500,10 +395,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   @override
   int get hashCode => Object.hash(
     id,
-    section,
-    category,
-    article,
-    language,
+    articleId,
     type,
     title,
     content,
@@ -517,10 +409,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
       identical(this, other) ||
       (other is ArticleItem &&
           other.id == this.id &&
-          other.section == this.section &&
-          other.category == this.category &&
-          other.article == this.article &&
-          other.language == this.language &&
+          other.articleId == this.articleId &&
           other.type == this.type &&
           other.title == this.title &&
           other.content == this.content &&
@@ -532,10 +421,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
 
 class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   final Value<String> id;
-  final Value<String> section;
-  final Value<String> category;
-  final Value<String> article;
-  final Value<String> language;
+  final Value<String> articleId;
   final Value<ArticleType> type;
   final Value<String?> title;
   final Value<String?> content;
@@ -546,10 +432,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   final Value<int> rowid;
   const ArticleItemsCompanion({
     this.id = const Value.absent(),
-    this.section = const Value.absent(),
-    this.category = const Value.absent(),
-    this.article = const Value.absent(),
-    this.language = const Value.absent(),
+    this.articleId = const Value.absent(),
     this.type = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
@@ -561,10 +444,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   });
   ArticleItemsCompanion.insert({
     required String id,
-    required String section,
-    required String category,
-    required String article,
-    required String language,
+    required String articleId,
     required ArticleType type,
     this.title = const Value.absent(),
     this.content = const Value.absent(),
@@ -574,18 +454,12 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     required int order,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       section = Value(section),
-       category = Value(category),
-       article = Value(article),
-       language = Value(language),
+       articleId = Value(articleId),
        type = Value(type),
        order = Value(order);
   static Insertable<ArticleItem> custom({
     Expression<String>? id,
-    Expression<String>? section,
-    Expression<String>? category,
-    Expression<String>? article,
-    Expression<String>? language,
+    Expression<String>? articleId,
     Expression<String>? type,
     Expression<String>? title,
     Expression<String>? content,
@@ -597,10 +471,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (section != null) 'section': section,
-      if (category != null) 'category': category,
-      if (article != null) 'article': article,
-      if (language != null) 'language': language,
+      if (articleId != null) 'article_id': articleId,
       if (type != null) 'type': type,
       if (title != null) 'title': title,
       if (content != null) 'content': content,
@@ -614,10 +485,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
 
   ArticleItemsCompanion copyWith({
     Value<String>? id,
-    Value<String>? section,
-    Value<String>? category,
-    Value<String>? article,
-    Value<String>? language,
+    Value<String>? articleId,
     Value<ArticleType>? type,
     Value<String?>? title,
     Value<String?>? content,
@@ -629,10 +497,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   }) {
     return ArticleItemsCompanion(
       id: id ?? this.id,
-      section: section ?? this.section,
-      category: category ?? this.category,
-      article: article ?? this.article,
-      language: language ?? this.language,
+      articleId: articleId ?? this.articleId,
       type: type ?? this.type,
       title: title ?? this.title,
       content: content ?? this.content,
@@ -650,17 +515,8 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (section.present) {
-      map['section'] = Variable<String>(section.value);
-    }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
-    }
-    if (article.present) {
-      map['article'] = Variable<String>(article.value);
-    }
-    if (language.present) {
-      map['language'] = Variable<String>(language.value);
+    if (articleId.present) {
+      map['article_id'] = Variable<String>(articleId.value);
     }
     if (type.present) {
       map['type'] = Variable<String>(
@@ -695,10 +551,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   String toString() {
     return (StringBuffer('ArticleItemsCompanion(')
           ..write('id: $id, ')
-          ..write('section: $section, ')
-          ..write('category: $category, ')
-          ..write('article: $article, ')
-          ..write('language: $language, ')
+          ..write('articleId: $articleId, ')
           ..write('type: $type, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
@@ -726,10 +579,7 @@ abstract class _$MyDatabase extends GeneratedDatabase {
 typedef $$ArticleItemsTableCreateCompanionBuilder =
     ArticleItemsCompanion Function({
       required String id,
-      required String section,
-      required String category,
-      required String article,
-      required String language,
+      required String articleId,
       required ArticleType type,
       Value<String?> title,
       Value<String?> content,
@@ -742,10 +592,7 @@ typedef $$ArticleItemsTableCreateCompanionBuilder =
 typedef $$ArticleItemsTableUpdateCompanionBuilder =
     ArticleItemsCompanion Function({
       Value<String> id,
-      Value<String> section,
-      Value<String> category,
-      Value<String> article,
-      Value<String> language,
+      Value<String> articleId,
       Value<ArticleType> type,
       Value<String?> title,
       Value<String?> content,
@@ -770,23 +617,8 @@ class $$ArticleItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get section => $composableBuilder(
-    column: $table.section,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get category => $composableBuilder(
-    column: $table.category,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get article => $composableBuilder(
-    column: $table.article,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get language => $composableBuilder(
-    column: $table.language,
+  ColumnFilters<String> get articleId => $composableBuilder(
+    column: $table.articleId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -841,23 +673,8 @@ class $$ArticleItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get section => $composableBuilder(
-    column: $table.section,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get category => $composableBuilder(
-    column: $table.category,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get article => $composableBuilder(
-    column: $table.article,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get language => $composableBuilder(
-    column: $table.language,
+  ColumnOrderings<String> get articleId => $composableBuilder(
+    column: $table.articleId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -909,17 +726,8 @@ class $$ArticleItemsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get section =>
-      $composableBuilder(column: $table.section, builder: (column) => column);
-
-  GeneratedColumn<String> get category =>
-      $composableBuilder(column: $table.category, builder: (column) => column);
-
-  GeneratedColumn<String> get article =>
-      $composableBuilder(column: $table.article, builder: (column) => column);
-
-  GeneratedColumn<String> get language =>
-      $composableBuilder(column: $table.language, builder: (column) => column);
+  GeneratedColumn<String> get articleId =>
+      $composableBuilder(column: $table.articleId, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<ArticleType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
@@ -976,10 +784,7 @@ class $$ArticleItemsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
-                Value<String> section = const Value.absent(),
-                Value<String> category = const Value.absent(),
-                Value<String> article = const Value.absent(),
-                Value<String> language = const Value.absent(),
+                Value<String> articleId = const Value.absent(),
                 Value<ArticleType> type = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
@@ -990,10 +795,7 @@ class $$ArticleItemsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ArticleItemsCompanion(
                 id: id,
-                section: section,
-                category: category,
-                article: article,
-                language: language,
+                articleId: articleId,
                 type: type,
                 title: title,
                 content: content,
@@ -1006,10 +808,7 @@ class $$ArticleItemsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
-                required String section,
-                required String category,
-                required String article,
-                required String language,
+                required String articleId,
                 required ArticleType type,
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
@@ -1020,10 +819,7 @@ class $$ArticleItemsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ArticleItemsCompanion.insert(
                 id: id,
-                section: section,
-                category: category,
-                article: article,
-                language: language,
+                articleId: articleId,
                 type: type,
                 title: title,
                 content: content,

@@ -1,13 +1,30 @@
-import 'package:zad_aldaia/features/categories/data/models/category.dart';
+part of 'categories_cubit.dart';
 
-sealed class CategoriesState{
+sealed class CategoriesState {}
+
+class LoadingState extends CategoriesState {}
+
+class LoadedState extends CategoriesState {
+  final Category item;
+
+  LoadedState(this.item);
 }
 
-class LoadingState extends CategoriesState{}
+class ListLoadedState extends CategoriesState {
+  final List<Category> items;
 
-class LoadedState extends CategoriesState{
-  final List<Category> categories;
-
-  LoadedState(this.categories);
+  ListLoadedState(this.items);
 }
 
+class SavingState extends CategoriesState {}
+
+class SavedState extends CategoriesState {
+  // final String data;
+  // SavedState(this.data);
+}
+
+class ErrorState extends CategoriesState {
+  final String error;
+
+  ErrorState(this.error);
+}

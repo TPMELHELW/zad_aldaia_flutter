@@ -85,4 +85,6 @@ class MyTextStyle {
       fontWeight: FontWeightHelper.regular,
       color: Colors.black
   );
+
+  static var font16Grey;
 }

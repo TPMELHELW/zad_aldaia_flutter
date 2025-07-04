@@ -13,33 +13,20 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-
   @override
   void didChangeDependencies() {
-    titles = [
-      S.of(context).addCategoryTitle,
-      S.of(context).addArticleTitle,
-      S.of(context).addItem,
-      S.of(context).editItem,
-    ];
+    titles = [S.of(context).addCategoryTitle, S.of(context).addArticleTitle, S.of(context).addItem, S.of(context).editItem];
     super.didChangeDependencies();
   }
 
   late final List<String> titles;
 
-  final routes = const [
-    MyRoutes.addCategoryScreen,
-    MyRoutes.addArticleScreen,
-    MyRoutes.addItemScreen,
-    MyRoutes.editItemScreen,
-  ];
+  final routes = const [MyRoutes.addCategoryScreen, MyRoutes.addArticleScreen, MyRoutes.addItemScreen, MyRoutes.addItemScreen];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).admin, style: MyTextStyle.font22primaryBold),
-      ),
+      appBar: AppBar(title: Text(S.of(context).admin, style: MyTextStyle.font22primaryBold)),
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -53,20 +40,24 @@ class _AdminScreenState extends State<AdminScreen> {
                   widthFactor: .8,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(routes[index]);
+                      // Navigator.of(context).pushNamed(routes[index]);
+                      switch (index) {
+                        case 0:
+                          Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"section": "", "language": ""});
+                          break;
+                        case 1:
+                          Navigator.of(context).pushNamed(MyRoutes.addArticleScreen, arguments: {"section": "", "category": "", "language": ""});
+                          break;
+                        case 2:
+                          Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"section": "", "category": "", "article": "", "language": ""});
+                          break;
+                        case 3:
+                          Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"section": "", "category": "", "article": "", "language": ""});
+                          break;
+                      }
                     },
-                    style: ButtonStyle(
-                      padding: WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(vertical: 10.h),
-                      ),
-                      backgroundColor: WidgetStatePropertyAll(
-                        MyColors.primaryColor,
-                      ),
-                    ),
-                    child: Text(
-                      titles[index],
-                      style: MyTextStyle.font18WhiteRegular,
-                    ),
+                    style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)), backgroundColor: WidgetStatePropertyAll(MyColors.primaryColor)),
+                    child: Text(titles[index], style: MyTextStyle.font18WhiteRegular),
                   ),
                 ),
           ),
