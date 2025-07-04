@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
 
   share_plus: ^11.0.0
   html_unescape: ^2.0.0
-  intl: ^0.19.0
+  intl: 0.20.2
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.17
   flutter_screenutil: ^5.9.3
@@ -50,6 +50,13 @@ dependencies:
   firebase_storage: ^12.4.5
   image_picker: ^1.1.2
   supabase_flutter: ^2.9.0
+  intro_screen_onboarding_flutter: ^1.0.0
+  animations: ^2.0.11
+  google_nav_bar: ^5.0.7
+  line_icons: ^2.0.1
+  google_fonts: ^6.2.1
+  flutter_staggered_animations: ^1.1.1
+
 
 
 
@@ -82,7 +89,7 @@ flutter:
     - assets/
     - assets/images/flags/
     # - assets/images/
-    # - assets/images/png/
+    - assets/images/png/
     # - assets/images/svg/
     - web/sqlite3.wasm
     - web/drift_worker.js
@@ -99,5 +106,20 @@ flutter:
      - family: search_icon
        fonts:
          - asset: assets/fonts/search_icon.ttf
+     - family: Exo 
+       fonts:
+         - asset: assets/fonts/Exo.ttf
+     - family: Rubik 
+       fonts:
+         - asset: assets/fonts/Rubik.ttf 
+     - family: Micro5 
+       fonts:
+         - asset: assets/fonts/Micro5.ttf
+     - family: Jolly 
+       fonts:
+         - asset: assets/fonts/Jolly.ttf   
+     - family: Protest 
+       fonts:
+         - asset: assets/fonts/Protest.ttf 
 flutter_intl:
   enabled: true

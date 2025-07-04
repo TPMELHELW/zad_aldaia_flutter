@@ -6,124 +6,120 @@ import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/items/data/models/item.dart';
 
-import '../../../../core/theming/my_colors.dart';
-import '../../../../core/widgets/note_dialog.dart';
-
 class VideoItem extends StatefulWidget {
   final Item item;
   final bool? isSelected;
+  final Function(Item)? onSelect;
   final Function(Item)? onItemUp;
   final Function(Item)? onItemDown;
-  final Function(Item)? onSelect;
 
-  const VideoItem({super.key, required this.item, this.onSelect, this.isSelected, this.onItemUp, this.onItemDown});
+  const VideoItem({
+    super.key, 
+    required this.item, 
+    this.onSelect, 
+    this.isSelected, 
+    this.onItemUp, 
+    this.onItemDown
+  });
 
   @override
-  State<VideoItem> createState() => _YoutubePlayerWidgetState();
+  State<VideoItem> createState() => _VideoItemState();
 }
 
-class _YoutubePlayerWidgetState extends State<VideoItem> {
-  late YoutubePlayerController _youtubeController;
-  final ExpansionTileController _controller = ExpansionTileController();
+class _VideoItemState extends State<VideoItem> {
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _initializePlayer();
-  }
-
-  void _initializePlayer() {
-    final videoId = YoutubePlayer.convertUrlToId(widget.item.youtubeUrl!)!;
-
-    _youtubeController = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
+    final videoId = YoutubePlayer.convertUrlToId(widget.item.youtubeUrl ?? '') ?? '';
+    _controller = YoutubePlayerController(
+      initialVideoId: videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+      ),
+    );
   }
 
   @override
   void dispose() {
-    _youtubeController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-      child: Material(
-        elevation: 2,
-        child: ExpansionTile(
-          controller: _controller,
-          expandedAlignment: Alignment.topLeft,
-          title: SelectableText(
-            onTap: () {
-              _controller.isExpanded ? _controller.collapse() : _controller.expand();
-            },
+    return Column(
+      children: [
+        ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          title: const Text(
             'Video',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF005A32)),
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.item.note?.trim().isNotEmpty ?? false)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note!));
-                    },
-                    child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
-                  ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                  progressIndicatorColor: const Color(0xFF005A32),
                 ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
               ),
-              if (Supabase.instance.client.auth.currentUser != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"id": widget.item.id});
-                    },
-                    child: Icon(Icons.edit, color: MyColors.primaryColor),
+            ),
+            _buildActionBar(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.share, color: Color(0xFF005A32)),
+            onPressed: () => Share.item(widget.item),
+          ),
+          Row(
+            children: [
+              if (Supabase.instance.client.auth.currentUser != null) ...[
+                IconButton(
+                  icon: const Icon(Icons.arrow_upward, color: Color(0xFF005A32)),
+                  onPressed: () => widget.onItemUp?.call(widget.item),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_downward, color: Color(0xFF005A32)),
+                  onPressed: () => widget.onItemDown?.call(widget.item),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Color(0xFF005A32)),
+                  onPressed: () => Navigator.of(context).pushNamed(
+                    MyRoutes.addItemScreen, 
+                    arguments: {"id": widget.item.id}
                   ),
                 ),
-              if (Supabase.instance.client.auth.currentUser != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: Column(
-                    children: [
-                      InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
-                      InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
-                    ],
-                  ),
-                ),
+              ],
               if (widget.isSelected != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: InkWell(
-                    onTap: () => widget.onSelect?.call(widget.item),
-                    child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
+                IconButton(
+                  icon: Icon(
+                    widget.isSelected! ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: const Color(0xFF005A32),
                   ),
+                  onPressed: () => widget.onSelect?.call(widget.item),
                 ),
             ],
           ),
-          controlAffinity: ListTileControlAffinity.leading,
-          tilePadding: EdgeInsets.symmetric(horizontal: 5.w),
-          children: [
-            YoutubePlayer(
-              controller: _youtubeController,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.redAccent,
-              bottomActions: const [
-                SizedBox(width: 14),
-                CurrentPosition(),
-                SizedBox(width: 8),
-                ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
-                RemainingDuration(),
-                PlaybackSpeedButton(),
-              ],
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

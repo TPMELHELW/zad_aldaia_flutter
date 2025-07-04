@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:drift/drift.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';

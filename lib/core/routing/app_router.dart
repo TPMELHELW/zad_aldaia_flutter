@@ -7,20 +7,28 @@ import 'package:zad_aldaia/features/articles/ui/articles_screen.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/categories_screen.dart';
 import 'package:zad_aldaia/features/categories/ui/category_form_screen.dart';
+import 'package:zad_aldaia/features/categories/ui/home_screen.dart';
 import 'package:zad_aldaia/features/categories/ui/sections_screen.dart';
 import 'package:zad_aldaia/features/items/ui/item_form_screen.dart';
 import 'package:zad_aldaia/features/items/ui/items_screen.dart';
 import 'package:zad_aldaia/features/items/ui/search_screen.dart';
 import 'package:zad_aldaia/features/languages/languages_screen.dart';
+import 'package:zad_aldaia/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:zad_aldaia/features/onboarding/presentation/screens/user_type_screen.dart';
 
 class AppRouter {
   Route? generateRoutes(RouteSettings settings) {
     final arguments = settings.arguments as Map? ?? {};
 
-    switch (settings.name) {
+    switch (settings.name) {case MyRoutes.onboarding:
+         return MaterialPageRoute(builder: (context) => OnboardingScreen());
+     case MyRoutes.usertype:
+        return MaterialPageRoute(builder: (context) => UserTypeScreen());
       case MyRoutes.languages:
         return MaterialPageRoute(builder: (context) => LanguagesScreen());
       case MyRoutes.homeScreen:
+        return MaterialPageRoute(builder: (context) => HomeScreen());
+           case MyRoutes.homeScreen:
         return MaterialPageRoute(builder: (context) => SectionsScreen());
       case MyRoutes.categories:
         return MaterialPageRoute(

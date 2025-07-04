@@ -68,7 +68,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
 
   fillForm() async {
     titleController.text = item.title ?? '';
-    backgroundColorController.text = item.backgroundColor ?? '';
     noteController.text = item.note ?? '';
     contentController.text = item.content ?? '';
     youtubeUrlController.text = item.youtubeUrl ?? '';
@@ -95,7 +94,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
       item.title = titleController.text.trim();
       item.content = contentController.text.trim();
       item.youtubeUrl = youtubeUrlController.text.trim();
-      item.backgroundColor = backgroundColorController.text.trim();
       item.note = noteController.text.trim();
 
       await store.saveItem(item);

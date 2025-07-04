@@ -5,7 +5,6 @@ import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/articles/logic/articles_cubit.dart';
 import 'package:zad_aldaia/features/articles/ui/widgets/article_item.dart';
-import '../../../core/theming/my_text_style.dart';
 
 class ArticlesScreen extends StatefulWidget {
   final String categoryId;
@@ -13,7 +12,13 @@ class ArticlesScreen extends StatefulWidget {
   final String? section;
   final String? language;
 
-  const ArticlesScreen({super.key, required this.categoryId, required this.title, this.section, this.language});
+  const ArticlesScreen({
+    super.key, 
+    required this.categoryId, 
+    required this.title, 
+    this.section, 
+    this.language
+  });
 
   @override
   State<ArticlesScreen> createState() => _ArticlesScreenState();
@@ -21,60 +26,171 @@ class ArticlesScreen extends StatefulWidget {
 
 class _ArticlesScreenState extends State<ArticlesScreen> {
   late ArticlesCubit cubit = getIt<ArticlesCubit>();
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollToTop = false;
 
   @override
   void initState() {
-    cubit.loadArticles({'category_id': widget.categoryId});
     super.initState();
+    cubit.loadArticles({'category_id': widget.categoryId});
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 300 && !_showScrollToTop) {
+      setState(() => _showScrollToTop = true);
+    } else if (_scrollController.offset <= 300 && _showScrollToTop) {
+      setState(() => _showScrollToTop = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF0FAE6),
+      floatingActionButton: _showScrollToTop
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xFF005A32),
+              child: const Icon(Icons.arrow_upward, color: Colors.white),
+              onPressed: () => _scrollController.animateTo(
+                0,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              ),
+            )
+          : null,
       appBar: AppBar(
-        titleTextStyle: MyTextStyle.font22primaryBold,
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Exo',
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF005A32), Color(0xFF008A45)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: [
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                Navigator.of(context).pushNamed(MyRoutes.addArticleScreen, arguments: {"section": widget.section, "language": widget.language});
-              },
+              icon: const Icon(Icons.add, color: Colors.white),
+              onPressed: () => Navigator.of(context).pushNamed(
+                MyRoutes.addArticleScreen,
+                arguments: {
+                  "section": widget.section,
+                  "language": widget.language,
+                },
+              ),
             ),
         ],
       ),
-      body: SizedBox.expand(
-        child: BlocProvider(
-          create: (context) => cubit,
-          child: BlocBuilder<ArticlesCubit, ArticlesState>(
-            builder: (context, state) {
-              if (state is ListLoadedState) {
-                if (state.items.isEmpty) {
-                  return Center(child: Text('Empty'));
-                }
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: state.items.length,
-                        itemBuilder:
-                            (context, index) => ArticleItem(
-                              article: state.items[index],
-                              onPressed: (p0) => Navigator.of(context).pushNamed(MyRoutes.items, arguments: {"id": state.items[index].id, "title": state.items[index].title}),
+      body: BlocProvider(
+        create: (context) => cubit,
+        child: BlocBuilder<ArticlesCubit, ArticlesState>(
+          builder: (context, state) {
+            if (state is LoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF005A32),
+                ),
+              );
+            }
+
+            if (state is ErrorState) {
+              return Center(
+                child: Text(
+                  state.error,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            if (state is ListLoadedState) {
+              if (state.items.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.article_outlined,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No articles found',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      if (Supabase.instance.client.auth.currentUser != null)
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            MyRoutes.addArticleScreen,
+                            arguments: {
+                              "section": widget.section,
+                              "language": widget.language,
+                            },
+                          ),
+                          child: const Text(
+                            'Create First Article',
+                            style: TextStyle(
+                              color: Color(0xFF005A32),
+                              fontWeight: FontWeight.bold,
                             ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                color: const Color(0xFF005A32),
+                onRefresh: () async {
+                  await cubit.loadArticles({'category_id': widget.categoryId});
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.items.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ArticleItem(
+                      article: state.items[index],
+                      onPressed: (article) => Navigator.of(context).pushNamed(
+                        MyRoutes.items,
+                        arguments: {
+                          "id": article.id,
+                          "title": article.title,
+                        },
                       ),
                     ),
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
+                  ),
+                ),
+              );
+            }
+
+            return Container();
+          },
         ),
       ),
     );
